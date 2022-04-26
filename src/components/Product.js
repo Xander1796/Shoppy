@@ -1,9 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import useCurrency from "../customHooks/useCurrency";
 import { useGlobalContext } from "../context";
 
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { HiChevronDown, HiChevronUp } from "react-icons/hi";
+import { HiChevronDown, HiChevronUp, HiOutlineCheck } from "react-icons/hi";
 
 const Product = ({ product }) => {
   const {
@@ -11,9 +11,21 @@ const Product = ({ product }) => {
     shoppingCartProducts,
     currency,
     convertPrice,
+    setLocalStorage,
   } = useGlobalContext();
 
+  const [isAddToCartAnimOpen, setIsAddToCartAnimOpen] = useState(false);
   const quantityRef = useRef();
+
+  useEffect(() => {
+    let timeout;
+    if (isAddToCartAnimOpen) {
+      timeout = setTimeout(() => {
+        setIsAddToCartAnimOpen(false);
+      }, 2000);
+    }
+    return () => clearTimeout(timeout);
+  });
 
   const handleShoppingCartItem = (id) => {
     let isItemAlreadyInCart = false;
@@ -29,6 +41,7 @@ const Product = ({ product }) => {
       };
 
       setShoppingCartProducts([...shoppingCartProducts, product]);
+      setLocalStorage([...shoppingCartProducts, product]);
     }
 
     if (isItemAlreadyInCart) {
@@ -44,9 +57,12 @@ const Product = ({ product }) => {
         productQuantity + shoppingCartItemQuantity;
       const slicedArray = shoppingCartProducts.slice();
       setShoppingCartProducts(slicedArray);
+      setLocalStorage(slicedArray);
     }
 
     quantityRef.current.textContent = 1;
+
+    setIsAddToCartAnimOpen(true);
   };
 
   const handleQuantity = (e) => {
@@ -89,6 +105,13 @@ const Product = ({ product }) => {
           {" "}
           <MdOutlineShoppingCart />
           Add to cart
+          <span
+            className={`add-to-cart-anim-wrapper ${
+              isAddToCartAnimOpen ? "active" : ""
+            }`}
+          >
+            <HiOutlineCheck />
+          </span>
         </button>
       </div>
     </li>

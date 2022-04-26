@@ -44,7 +44,6 @@ h1 {
 
 button {
   border: none;
-  outline: none;
 }
 
 .btn {
@@ -150,7 +149,7 @@ nav {
   color: #1e67a7;
   outline: 4px solid #f8f9fb;
   font-weight: 600;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   border-radius: 50%;
 }
 
@@ -304,6 +303,11 @@ nav {
   height: 4rem;
   border-radius: 50%;
   cursor: pointer;
+  transition: .2s ease background-color;
+}
+
+.product-quantity-wrapper button:hover {
+  background: #90f7d9;
 }
 
 .product-quantity-wrapper svg {
@@ -311,6 +315,7 @@ nav {
 }
 
 .product-cta {
+  position: relative;
   display: flex;
   gap: 0.7rem;
   align-items: center;
@@ -321,6 +326,51 @@ nav {
 .product-cta svg {
   width: 1.6em;
   height: 1.6em;
+}
+
+.add-to-cart-anim-wrapper {
+  visibility: hidden;
+  opacity: 1;
+  display: grid;
+  place-content: center;
+  position: absolute;
+  font-size: 1.5rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  right: -1rem;
+  top: -1rem;
+  background: #94ffe0;
+  color: #1d704f;
+  outline: 3px solid #f7faff;
+  transform: scale(0.8);
+  transition: 0.2s ease transform;
+}
+
+.add-to-cart-anim-wrapper.active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.add-to-cart-anim-wrapper path {
+  stroke-dasharray: 25;
+  stroke-dashoffset: 25;
+}
+
+.add-to-cart-anim-wrapper.active path {
+  animation: add-to-cart-anim-path 0.4s 0.2s forwards;
+}
+
+@keyframes add-to-cart-anim-path {
+  0% {
+    stroke-dasharray: 25;
+    stroke-dashoffset: 25;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
 
 .shopping-cart-wrapper {
@@ -431,6 +481,7 @@ nav {
 .cart-product .cart-product-value {
   font-size: 1.6rem;
   font-weight: 600;
+  color: var(--primary-color-700);
 }
 
 .cart-product-info-wrapper {
@@ -497,11 +548,13 @@ nav {
 }
 
 .cart-product .quantity-and-value input {
-  width: 5rem;
+  width: 7rem;
+  height: 4rem;
   padding: 0.3rem 0.7rem;
-  font-size: 1.5rem;
-  font-weight: 500;
+  font-size: 1.6rem;
+  font-weight: 600;
   border: 1px solid #e2e5ee;
+  color: var(--primary-color-700);
   border-radius: var(--border-radius);
 }
 
@@ -613,7 +666,7 @@ footer a svg {
 
   .cart-product-description {
     left: -18.5rem;
-    width: 25rem;
+    width: 22rem;
     transform: translateX(0);
   }
 

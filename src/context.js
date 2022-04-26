@@ -19,6 +19,18 @@ const AppProvider = ({ children }) => {
   const currencyValueRef = useRef();
   const categoryValueRef = useRef();
 
+  useEffect(() => {
+    if (!localStorage.getItem("shoppyCart")) {
+      localStorage.setItem("shoppyCart", JSON.stringify([]));
+    } else {
+      setShoppingCartProducts(JSON.parse(localStorage.getItem("shoppyCart")));
+    }
+  }, []);
+
+  const setLocalStorage = (shoppingCartArray) => {
+    localStorage.setItem("shoppyCart", JSON.stringify(shoppingCartArray));
+  };
+
   const handleProductsOrder = (array) => {
     let sortedArray;
 
@@ -153,6 +165,7 @@ const AppProvider = ({ children }) => {
         isShoppingCartVisible,
         setIsShoppingCartVisible,
         totalItemsQuantity,
+        setLocalStorage,
       }}
     >
       {children}

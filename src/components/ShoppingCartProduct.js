@@ -15,9 +15,9 @@ const ShoppingCartProduct = ({ product }) => {
     convertPrice,
     getTotalCartValue,
     handleProductsOrder,
+    setLocalStorage
   } = useGlobalContext();
 
-  const [inputValue, setInputValue] = useState(product.quantity);
   const [isInputQuantityCorrect, setIsInputQuantityCorrect] = useState(true);
   const quantityInput = useRef();
 
@@ -29,19 +29,7 @@ const ShoppingCartProduct = ({ product }) => {
     );
 
     setShoppingCartProducts(newShoppingCartProducts);
-  };
-
-  const reintroduceItemInProductsArray = (id) => {
-    const targetedItemIndex = shoppingCartProducts.findIndex(
-      (item) => item.id === id
-    );
-
-    const newProductsArray = [
-      ...products,
-      shoppingCartProducts[targetedItemIndex],
-    ];
-
-    handleProductsOrder(newProductsArray);
+    setLocalStorage(newShoppingCartProducts);
   };
 
   return (
@@ -71,6 +59,7 @@ const ShoppingCartProduct = ({ product }) => {
                 shoppingCartProducts[targetedProductIndex].quantity =
                   quantityInput.current.value;
                 setShoppingCartProducts(shoppingCartProducts.slice());
+                setLocalStorage(shoppingCartProducts);
                 getTotalCartValue();
               }
             }}
@@ -93,7 +82,6 @@ const ShoppingCartProduct = ({ product }) => {
             title="Remove item"
             onClick={() => {
               deleteShoppingCartItem(product.id);
-              reintroduceItemInProductsArray(product.id);
             }}
           >
             <BsTrashFill />
