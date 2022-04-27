@@ -15,10 +15,16 @@ const Nav = () => {
   return (
     <nav>
       <div className="nav-wrapper">
-        <h1>Shoppy</h1>
-        <button className="shopping-cart-btn" onClick={openShoppingCart}>
+        <h1>
+          <MdOutlineShoppingCart /> Shoppy
+        </h1>
+        <button
+          className="shopping-cart-btn btn btn-green"
+          onClick={openShoppingCart}
+          title="shopping cart"
+        >
           <MdOutlineShoppingCart />
-          <span className="quantity">{totalItemsQuantity}</span>
+          <span className="quantity btn btn-accent">{totalItemsQuantity}</span>
         </button>
       </div>
     </nav>

@@ -1,9 +1,12 @@
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import useCurrency from "../customHooks/useCurrency";
 import { useGlobalContext } from "../context";
 
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { HiChevronDown, HiChevronUp, HiOutlineCheck } from "react-icons/hi";
+import { HiOutlineCheck } from "react-icons/hi";
+
+//components
+import ProductQuantity from "./ProductQuantity";
 
 const Product = ({ product }) => {
   const {
@@ -15,7 +18,7 @@ const Product = ({ product }) => {
   } = useGlobalContext();
 
   const [isAddToCartAnimOpen, setIsAddToCartAnimOpen] = useState(false);
-  const quantityRef = useRef();
+  const [itemQuantity, setItemQuantity] = useState(1);
 
   useEffect(() => {
     let timeout;
@@ -29,7 +32,6 @@ const Product = ({ product }) => {
 
   const handleShoppingCartItem = (id) => {
     let isItemAlreadyInCart = false;
-    let productQuantity = Number(quantityRef.current.textContent);
 
     if (shoppingCartProducts.some((item) => item.id === id))
       isItemAlreadyInCart = true;
@@ -37,7 +39,7 @@ const Product = ({ product }) => {
     if (!isItemAlreadyInCart) {
       product = {
         ...product,
-        quantity: productQuantity,
+        quantity: itemQuantity,
       };
 
       setShoppingCartProducts([...shoppingCartProducts, product]);
@@ -54,23 +56,15 @@ const Product = ({ product }) => {
       );
 
       shoppingCartProducts[targetedItemIndex].quantity =
-        productQuantity + shoppingCartItemQuantity;
+        itemQuantity + shoppingCartItemQuantity;
       const slicedArray = shoppingCartProducts.slice();
       setShoppingCartProducts(slicedArray);
       setLocalStorage(slicedArray);
     }
 
-    quantityRef.current.textContent = 1;
+    setItemQuantity(1);
 
     setIsAddToCartAnimOpen(true);
-  };
-
-  const handleQuantity = (e) => {
-    let quantity = Number(quantityRef.current.textContent);
-    if (e.target.classList.contains("increase-quantity")) quantity++;
-    if (e.target.classList.contains("decrease-quantity") && quantity !== 1)
-      quantity--;
-    quantityRef.current.textContent = quantity;
   };
 
   const currencySign = useCurrency(currency);
@@ -85,19 +79,9 @@ const Product = ({ product }) => {
           Price: <span>{currencySign}</span>
           <span>{convertPrice(currency, product.price)}</span>
         </span>
-        <div className="product-quantity-wrapper">
-          <button className="decrease-quantity" onClick={handleQuantity}>
-            <HiChevronDown />
-          </button>
-          <span ref={quantityRef} className="quantity">
-            1
-          </span>
-          <button className="increase-quantity" onClick={handleQuantity}>
-            <HiChevronUp />
-          </button>
-        </div>
+        <ProductQuantity props={{ itemQuantity, setItemQuantity }} />
         <button
-          className="product-cta btn"
+          className="product-cta btn btn-accent"
           onClick={() => {
             handleShoppingCartItem(product.id);
           }}

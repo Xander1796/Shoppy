@@ -8,16 +8,23 @@ import { IoMdClose } from "react-icons/io";
 const ShoppingCart = () => {
   const {
     shoppingCartProducts,
+    setShoppingCartProducts,
     currency,
     totalCartPrice,
     isShoppingCartVisible,
     setIsShoppingCartVisible,
+    setLocalStorage,
   } = useGlobalContext();
 
   const currencySign = useCurrency(currency);
 
   const hideShoppingCart = () => {
     setIsShoppingCartVisible(false);
+  };
+
+  const clearCart = () => {
+    setShoppingCartProducts([]);
+    setLocalStorage([]);
   };
 
   return (
@@ -27,7 +34,7 @@ const ShoppingCart = () => {
       <div className="shopping-cart-overlay" onClick={hideShoppingCart}></div>
       <div className="shopping-cart">
         <button
-          className="close-shopping-cart-btn"
+          className="close-shopping-cart-btn btn btn-accent"
           onClick={hideShoppingCart}
           title="close"
         >
@@ -41,6 +48,9 @@ const ShoppingCart = () => {
 
         {shoppingCartProducts.length > 0 && (
           <>
+            <button className="clear-cart btn btn-red" onClick={clearCart}>
+              Clear cart
+            </button>
             <ul className="cart-products">
               {shoppingCartProducts.map((product) => {
                 return (
@@ -54,7 +64,9 @@ const ShoppingCart = () => {
               <span>{totalCartPrice}</span>
             </h3>
 
-            <button className="shopping-cart-cta btn">Continue</button>
+            <button className="shopping-cart-cta btn btn-accent">
+              Continue
+            </button>
           </>
         )}
       </div>

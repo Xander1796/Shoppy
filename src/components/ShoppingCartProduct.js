@@ -1,27 +1,40 @@
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useGlobalContext } from "../context";
 import useCurrency from "../customHooks/useCurrency";
 
 import { BsTrashFill, BsFillInfoCircleFill } from "react-icons/bs";
-import { RiErrorWarningLine } from "react-icons/ri";
+
+//components
+import ProductQuantity from "./ProductQuantity";
 
 const ShoppingCartProduct = ({ product }) => {
   const {
-    products,
     shoppingCartProducts,
     setShoppingCartProducts,
     currency,
     convertPrice,
     getTotalCartValue,
-    handleProductsOrder,
-    setLocalStorage
+    setLocalStorage,
   } = useGlobalContext();
 
-  const [isInputQuantityCorrect, setIsInputQuantityCorrect] = useState(true);
-  const quantityInput = useRef();
+  const [itemQuantity, setItemQuantity] = useState(product.quantity);
 
   const currencySign = useCurrency(currency);
+
+  useEffect(() => {
+    const targetedProductIndex = shoppingCartProducts.findIndex(
+      (item) => item.id === product.id
+    );
+    shoppingCartProducts[targetedProductIndex].quantity = itemQuantity;
+    setShoppingCartProducts(shoppingCartProducts.slice());
+    setLocalStorage(shoppingCartProducts);
+    getTotalCartValue();
+  }, [itemQuantity]);
+
+  useEffect(() => {
+    setItemQuantity(product.quantity);
+  }, [shoppingCartProducts]);
 
   const deleteShoppingCartItem = (id) => {
     const newShoppingCartProducts = shoppingCartProducts.filter(
@@ -38,38 +51,13 @@ const ShoppingCartProduct = ({ product }) => {
         <img src={product.image} alt={product.title} />
         <h4>{product.title}</h4>
         <div className="quantity-and-value">
-          <input
-            type="number"
-            min="1"
-            value={product.quantity}
-            ref={quantityInput}
-            onChange={() => {
-              product.quantity = Number(quantityInput.current.value);
-
-              if (quantityInput.current.value < 1) {
-                setIsInputQuantityCorrect(false);
-              }
-
-              if (quantityInput.current.value >= 1) {
-                if (!isInputQuantityCorrect) setIsInputQuantityCorrect(true);
-
-                const targetedProductIndex = shoppingCartProducts.findIndex(
-                  (item) => item.id === product.id
-                );
-                shoppingCartProducts[targetedProductIndex].quantity =
-                  quantityInput.current.value;
-                setShoppingCartProducts(shoppingCartProducts.slice());
-                setLocalStorage(shoppingCartProducts);
-                getTotalCartValue();
-              }
-            }}
-          />
           <span className="cart-product-value">
             <span>{currencySign}</span>
             {Number(
               convertPrice(currency, product.price) * product.quantity
             ).toFixed(2)}
           </span>
+          <ProductQuantity props={{ itemQuantity, setItemQuantity }} />
           <div className="cart-product-info-wrapper">
             <BsFillInfoCircleFill />
             <span className="cart-product-description">
@@ -78,7 +66,7 @@ const ShoppingCartProduct = ({ product }) => {
           </div>
 
           <button
-            className="delete-cart-product"
+            className="delete-cart-product btn btn-red"
             title="Remove item"
             onClick={() => {
               deleteShoppingCartItem(product.id);
@@ -88,13 +76,6 @@ const ShoppingCartProduct = ({ product }) => {
           </button>
         </div>
       </div>
-
-      {!isInputQuantityCorrect && (
-        <span className="cart-product-error">
-          <RiErrorWarningLine />
-          The product quantity must be equal or greater than 1
-        </span>
-      )}
     </li>
   );
 };
